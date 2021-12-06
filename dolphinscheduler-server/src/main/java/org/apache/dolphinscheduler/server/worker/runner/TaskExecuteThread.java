@@ -113,6 +113,7 @@ public class TaskExecuteThread implements Runnable {
                     logger);
 
             taskExecutionContext.setTaskParams(taskNode.getParams());
+            taskExecutionContext.setTaskName(taskNode.getName());
             taskExecutionContext.setEnvFile(CommonUtils.getSystemEnvPath());
             taskExecutionContext.setDefinedParams(getGlobalParamsMap());
 

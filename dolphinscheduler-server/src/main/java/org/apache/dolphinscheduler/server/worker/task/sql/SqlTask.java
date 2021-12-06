@@ -122,7 +122,7 @@ public class SqlTask extends AbstractTask {
         // set the name of the current thread
         String threadLoggerInfoName = String.format(Constants.TASK_LOG_INFO_FORMAT, taskExecutionContext.getTaskAppId());
         Thread.currentThread().setName(threadLoggerInfoName);
-
+        sqlParameters.setTaskName(taskExecutionContext.getTaskName());
         logger.info("Full sql parameters: {}", sqlParameters);
         logger.info("sql type : {}, datasource : {}, sql : {} , localParams : {},udfs : {},showType : {},connParams : {}",
                 sqlParameters.getType(),
@@ -370,6 +370,11 @@ public class SqlTask extends AbstractTask {
             Properties paramProp = new Properties();
             paramProp.setProperty(USER, baseDataSource.getUser());
             paramProp.setProperty(PASSWORD, baseDataSource.getPassword());
+            if (StringUtils.isEmpty(sqlParameters.getConnParams())) {
+                sqlParameters.setConnParams("spark.app.name=" + sqlParameters.getTaskName());
+            } else if (!sqlParameters.getConnParams().contains("spark.app.name")){
+                sqlParameters.setConnParams(sqlParameters.getConnParams() + ";spark.app.name=" + sqlParameters.getTaskName());
+            }
             Map<String, String> connParamMap = CollectionUtils.stringToMap(sqlParameters.getConnParams(),
                     SEMICOLON,
                     HIVE_CONF);
